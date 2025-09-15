@@ -31,4 +31,4 @@ SmartAdBot is a Python-based Telegram bot built with **aiogram** that sends targ
    git clone https://github.com/yourusername/SmartAdBot.git
    cd SmartAdBot 
    
-...
+... in progress
