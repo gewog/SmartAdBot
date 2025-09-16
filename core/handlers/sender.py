@@ -53,19 +53,26 @@ async def q_button(callback: CallbackQuery, bot: Bot, state: FSMContext):
     """Убираем клавиатуру"""
     await callback.message.edit_reply_markup(reply_markup=None)
     await callback.message.answer("Ok, давай без клавиаутры")
+    data = await state.get_data()
+    message_id = int(data.get("message_id"))
+    chat_id = int(data.get("chat_id"))
+    await confirm_post(callback.message, bot, message_id, chat_id)
+    await callback.message.delete()
 
-    # Функция подтвержедния рекламного сообщения
+
+# Функция подтвержедния рекламного сообщения
 
 @sender_router.message(Steps.get_text_button)
 async def get_text_button(message:Message, state: FSMContext):
     """Принмаем текст для кнопки, запрашиваем ссылку"""
     await state.update_data(get_text_button = message.text)
-    await message.answer("Теперь отправь ссылку для кнопик")
+    await message.answer("Теперь отправь ссылку для кнопки")
     await state.set_state(Steps.get_url_button)
 
+
 @sender_router.message(Steps.get_url_button)
-async def  get_url_button(message: Message, state: FSMContext, bot: Bot):
-    await state.update_data(get_url_button = message.text) # Сохраняю ссылку в машиеу состояний
+async def get_url_button(message: Message, state: FSMContext, bot: Bot):
+    await state.update_data(get_url_button = message.text) # Сохраняю ссылку в машину состояний
     data = await state.get_data()
     added_keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
@@ -73,6 +80,50 @@ async def  get_url_button(message: Message, state: FSMContext, bot: Bot):
                                  url=f"{message.text}")
         ]
     ])
-    await message.answer("bbbbb", reply_markup=added_keyboard)
+    message_id = int(data.get("message_id"))
+    chat_id = int(data.get("chat_id"))
+    await confirm_post(message, bot, message_id, chat_id, added_keyboard)
+
+async def confirm_post(message: Message, bot: Bot, message_id:int,
+                       chat_id: int, reply_markup: InlineKeyboardMarkup=None):
+    """
+    Функция отправки рекламного сообщения на утверждение
+    """
+    confirmation_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Подтвердить",
+                                 callback_data="yes")
+        ],
+        [
+            InlineKeyboardButton(text="Отклонить",
+                                 callback_data="no")
+        ],
+    ])
+    await message.answer("Ваше рекламное сообщение:")
+    await bot.copy_message(chat_id, chat_id, message_id, reply_markup=reply_markup)
+    await message.answer(f"Подтвердите рекламный пост на оправку.",
+                         reply_markup=confirmation_keyboard)
+
+@sender_router.callback_query(F.data.in_(["yes", "no"]))
+async def sender_decide(callback: CallbackQuery, bot: Bot, state: FSMContext,
+                        request: None):
+    """request - соединение с бд"""
+    data = await state.get_data()
+    # Получаю все данные
+    message_id = data.get("message_id")
+    chat_id = data.get("chat_id")
+    text_button = data.get("get_text_button")
+    url_button = data.get("get_url_button")
+    name_advert = data.get("name_adv")
+
+    if callback.data == "yes":
+        await callback.message.edit_text("Начинаю рассылку", reply_markup=None)
+        # Логика отправки рекламного материала
+    elif callback.data == "no":
+        await callback.message.edit_text("Начинаю рассылку", reply_markup=None)
+
+    await state.clear() # Очищаю машину состояний
+
+
 
 
