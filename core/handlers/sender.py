@@ -1,3 +1,5 @@
+import time
+
 from aiogram import Router, F, Bot
 from aiogram.types import (Message, CallbackQuery, InlineKeyboardMarkup,
                            InlineKeyboardButton)
@@ -6,7 +8,10 @@ from aiogram.fsm.context import FSMContext
 
 from config.config import ADMIN
 from core.utils.sender_state import Steps
-from core.keyboards.inline import get_confirm_button_keyboard
+from core.keyboards.inline import get_confirm_button_keyboard, get_keyboard_for_send
+
+from database.queries import get_all_users
+
 
 sender_router = Router()
 
@@ -105,22 +110,39 @@ async def confirm_post(message: Message, bot: Bot, message_id:int,
                          reply_markup=confirmation_keyboard)
 
 @sender_router.callback_query(F.data.in_(["yes", "no"]))
-async def sender_decide(callback: CallbackQuery, bot: Bot, state: FSMContext,
-                        request: None):
-    """request - соединение с бд"""
+async def sender_decide(callback: CallbackQuery, bot: Bot, state: FSMContext):
+
     data = await state.get_data()
     # Получаю все данные
-    message_id = data.get("message_id")
-    chat_id = data.get("chat_id")
+    message_id = data.get("message_id") # не надо
+    chat_id = data.get("chat_id") # не надо
     text_button = data.get("get_text_button")
     url_button = data.get("get_url_button")
     name_advert = data.get("name_adv")
+    message_text = data.get("message_text")
 
     if callback.data == "yes":
-        await callback.message.edit_text("Начинаю рассылку", reply_markup=None)
-        # Логика отправки рекламного материала
+        await callback.message.edit_text("Начинаю рассылку", reply_markup=None) #
+        users = await get_all_users()
+        print(users)
+        # Логика отправки рекламного материала (я тут: создать инлайн клавиатуру, если есть ресурсы в кейб инлайн)
+        for user in users:
+            try:
+                if text_button and url_button:
+                    keyboard = await get_keyboard_for_send(text_button, url_button)
+
+                    await bot.send_message(user, f"{message_text} !!!", reply_markup=keyboard)
+                else:
+                    await bot.send_message(user, f"{message_text} ***")
+            except Exception as e:
+                print(e)
+            time.sleep(0.2) # Пауза между сообщениями
+
+
+        await callback.message.answer(f"Рекламное сообщение успешно разослано")
+
     elif callback.data == "no":
-        await callback.message.edit_text("Начинаю рассылку", reply_markup=None)
+        await callback.message.edit_text("Как хотеть", reply_markup=None)
 
     await state.clear() # Очищаю машину состояний
 
