@@ -9,6 +9,7 @@
     on_shutdown: Обработчик остановки бота.
     main: Основная функция для запуска бота.
 """
+
 import asyncio
 import logging
 
@@ -18,6 +19,10 @@ from aiogram.filters import Command
 from config.config import bot, dp # Импортируем экземпляры бота и диспетчера из конфига
 
 from core.handlers.sender import sender_router
+from core.handlers.start import base_router
+
+from core.middlewares.user_collector import MyMiddlewareDB
+
 
 @dp.startup()
 async def on_startup(dispatcher: Dispatcher) -> None:
@@ -54,7 +59,11 @@ async def main() -> None:
         format="%(asctime)s - %(levelname)s - %(name)s: %(filename)s.%(funcName)s - %(message)s"
     )
 
+    dp.include_router(base_router)  # Приветственная ручка
     dp.include_router(sender_router)  # Регистрация хендлера из sender.py
+
+    dp.update.middleware.register(MyMiddlewareDB()) # Регистрация миддлвари сборки пользователей
+
     # Удаление вебхука (если был установлен ранее)
     await bot.delete_webhook(drop_pending_updates=True)
 
