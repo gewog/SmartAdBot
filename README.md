@@ -88,3 +88,7 @@ gewog
 
 ### 📄 Лицензия
 Проект распространяется под лицензией MIT.
+
+<div align="center">
+  <img src="https://media1.tenor.com/m/yjgMhbJ4izYAAAAC/kawaii-nice.gif" alt="Demo of SmartAdBot" width="200" />
+</div>
