@@ -49,3 +49,4 @@ jobs:
           ADMIN_ID: ${{ secrets.ADMIN_ID }}
           SQLALCHEMY_URL: ${{ secrets.SQLALCHEMY_URL }}
         run: poetry run pytest tests/ -v
+
