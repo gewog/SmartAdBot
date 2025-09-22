@@ -1,11 +1,12 @@
-__pycache__
-*.py[cod]
-*$py.class
-
-# Git
-.git
-
-# macOS
+venv/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 .DS_Store
-
-config/.env
+.idea/
+.vscode/
+dist/
+build/
+*.egg-info/
