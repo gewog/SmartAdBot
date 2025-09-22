@@ -45,5 +45,7 @@ jobs:
 
       - name: Run tests
         env:
-          SQLALCHEMY_URL: "postgresql+asyncpg://postgres:22iamgewog22@localhost:5432/server"
+          TOKEN: ${{ secrets.TOKEN }}
+          ADMIN_ID: ${{ secrets.ADMIN_ID }}
+          SQLALCHEMY_URL: ${{ secrets.SQLALCHEMY_URL }}
         run: poetry run pytest tests/ -v
