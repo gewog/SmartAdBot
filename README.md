@@ -2,33 +2,89 @@
 > The project is still evolving, and this documentation will be expanded.
 > Check back later for updates!
 
-# SmartAdBot 
+# SmartAdBot 🤖
 
-**Telegram bot for smart advertising distribution.**
+**SmartAdBot** — это Telegram-бот для автоматизации рассылок рекламных сообщений с поддержкой интерактивных кнопок и управления через админ-панель. Проект разработан для упрощения маркетинговых кампаний в Telegram.
 
-SmartAdBot is a Python-based Telegram bot built with **aiogram** that sends targeted advertisements to users while avoiding duplicates. It tracks who has already received each ad and ensures no user gets the same ad twice.
+---
 
-## Features
-✅ **Smart Distribution** – Sends ads only to users who haven’t received them yet.
+## 🌟 Возможности
+- **Рассылка сообщений** пользователям бота.
+- **Поддержка инлайн-кнопок** для интерактивных сообщений.
+- **Управление через команды** (`/sender`).
+- **Асинхронная работа** с базой данных PostgreSQL.
+- **FSM (Finite State Machine)** для управления состояниями бота.
 
-✅ **Anti-Spam** – Prevents duplicate ad deliveries.
+---
 
-✅ **User Tracking** – Maintains a database of sent ads per user.
+## 🛠 Стек технологий
+- **Язык**: Python 3.13
+- **Фреймворк**: [aiogram 3.x](https://docs.aiogram.dev/)
+- **База данных**: PostgreSQL + SQLAlchemy 2.0 + AsyncPG
+- **Управление зависимостями**: Poetry
+- **Тестирование**: Pytest + pytest-asyncio
+- **Линтинг**: Black
+- **Контейнеризация**: Docker + Docker Compose
 
-✅ **Easy to Use** – Simple commands for managing ad campaigns.
+---
 
-✅ **Scalable** – Designed to handle large user bases efficiently.
+## 🚀 Установка и запуск
 
-## Tech Stack
-- **Python 3.10+**
-- **[aiogram](https://github.com/aiogram/aiogram)** – Asynchronous Telegram Bot API framework.
-- **SQLite/PostgreSQL** – For storing user and ad delivery data.
-- **AsyncIO** – For high-performance ad distribution.
+### Предварительные требования
+- Установленный [Python 3.13](https://www.python.org/downloads/)
+- Установленный [Docker](https://docs.docker.com/get-docker/) и [Docker Compose](https://docs.docker.com/compose/install/)
+- Установленный [Poetry](https://python-poetry.org/docs/#installation)
 
-## Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/SmartAdBot.git
-   cd SmartAdBot 
-   
-... in progress
+---
+
+### 1. Клонирование репозитория
+```bash
+git clone https://github.com/gewog/SmartAdBot.git
+cd SmartAdBot
+```
+
+### 2. Настройка окружения
+
+Создайте файл .env в корне проекта и заполните его по примеру .env.example:
+```bash
+TOKEN=ваш_токен_Telegram_бота
+ADMIN_ID=ваш_Telegram_ID
+SQLALCHEMY_URL=postgresql+asyncpg://postgres:пароль@localhost:5432/имя_базы_данных
+
+```
+
+### 3. Установка зависимостей
+```bash
+poetry install
+```
+
+### 4. Запуск через Docker (рекомендуется)
+```bash
+docker-compose up --build
+```
+
+### 5. Локальный запуск (без Docker)
+```bash
+poetry run python main.py
+```
+
+---
+
+## 🧪 Запуск тестов
+```bash
+poetry run pytest tests/ -v
+```
+
+## 📌 Пример работы
+
+1. Отправьте боту команду /start, чтобы начать взаимодействие.
+2. Используйте команду /sender <название_рассылки>, чтобы создать новую рассылку.
+3. Следуйте инструкциям бота для настройки сообщения и кнопок.
+4. Подтвердите рассылку, и бот отправит сообщение всем пользователям.
+
+### 📝 Автор
+gewog  
+📧 gewoggewog@gmail.com
+
+### 📄 Лицензия
+Проект распространяется под лицензией MIT.
