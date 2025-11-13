@@ -79,9 +79,6 @@ async def message_text(message: Message, state: FSMContext) -> None:
         None
     """
     await state.update_data(message_text=message.text)
-    # data = await state.get_data()
-    # await message.answer(f"Пока твоя реклама {data.get('name_adv')} имеет мообщение: \n"
-    #                      f"{data.get('message_text')}")
 
     await message.answer(
         f"Я запомнил сообщение, которое ты хочешь разослать! \n"
